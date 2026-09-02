@@ -1,0 +1,40 @@
+
+title-text: ""
+title-font: "__FONT_TITLE__"
+desktop-image: "__BG_IMAGE_NAME__"
+terminal-font: "__FONT_TERMINAL__"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+terminal-border: "0"
+
++ boot_menu {
+    left = __MENU_LEFT__
+    width = __MENU_WIDTH__
+    top = __MENU_TOP__
+    height = __MENU_HEIGHT__
+    item_height = 30
+    item_padding = 18
+    item_spacing = 11
+    icon_width = 32
+    icon_height = 32
+    item_icon_space = 10
+    item_font = "__FONT_ITEM__"
+    item_color = "__ITEM_COLOR__"
+    selected_item_font = "__FONT_ITEM__"
+    selected_item_color = "__SELECTED_ITEM_COLOR__"
+    selected_item_pixmap_style = "__SELECT_PIXMAP_PATTERN__"
+}
+
++ label {
+    id = "__timeout__"
+    left = 85%
+    top = 0%
+    width = 300
+    height = 20
+    font = "__FONT_TIMEOUT__"
+    color = "__TIMEOUT_COLOR__"
+    align = "center"
+    text = "Booting in %ds"
+}

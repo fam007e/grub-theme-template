@@ -1,0 +1,53 @@
+# Copy this to theme.conf (or use a preset from presets/) and edit.
+#   cp theme.conf.example theme.conf
+
+THEME_NAME="my-grub-theme"
+
+# Background image, relative to repo root.
+BG_IMAGE="assets/bg.png"
+
+# Any .ttf/.otf. System font paths work fine, e.g.
+# FONT_FILE="/usr/share/fonts/truetype/meslo/MesloLGS-Bold.ttf"
+FONT_FILE="fonts/MyFont-Bold.ttf"
+
+# Sizes are generated on the fly with grub-mkfont — no bundled .pf2 files.
+FONT_TITLE_SIZE=60
+FONT_ITEM_SIZE=16
+FONT_TIMEOUT_SIZE=32
+FONT_TERMINAL_SIZE=16
+
+# Boot menu box position/size (GRUB theme units: %, px, or plain numbers).
+MENU_LEFT="-32%"
+MENU_WIDTH="45%"
+MENU_TOP="65%"
+MENU_HEIGHT=500
+
+# Colors (hex).
+ITEM_COLOR="#18191A"
+SELECTED_ITEM_COLOR="#D9DBDC"
+TIMEOUT_COLOR="#18191A"
+
+# Highlight pixmap for the selected menu item, relative to repo root,
+# plus the glob GRUB uses to find its *_c/_w/_n variants.
+SELECT_PIXMAP="assets/select_c.png"
+SELECT_PIXMAP_PATTERN="select_*.png"
+
+# Optional: override GRUB_GFXMODE written to /etc/default/grub on install.
+# GRUB_GFXMODE="1920x1080,1280x720,auto"
+
+# --- Advanced: per-role font overrides ----------------------------------
+# FONT_FILE above is the fallback for all four roles (title / item /
+# timeout label / terminal). Override any single role if you want:
+#
+# A different typeface just for the title than the menu items:
+# FONT_TITLE_FILE="fonts/Display-Bold.ttf"
+#
+# Already have a hand-picked .pf2 for a role instead of a source font?
+# Point straight at it — its FONT_<ROLE>_SIZE is then ignored, and the
+# font's name is read out of the file automatically, so you don't need
+# to know or guess it:
+# FONT_ITEM_PF2="fonts/my-custom-16.pf2"
+#
+# Note on .pf2: it's a fixed-size bitmap format baked from a vector font
+# via grub-mkfont — there's no tool to re-render a .pf2 at a different
+# size, so a supplied .pf2 must already be the exact size that role uses.
