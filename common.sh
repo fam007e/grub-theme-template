@@ -138,21 +138,35 @@ check_deps() {
 # pf2_font_name <path>
 # Reads the NAME chunk out of a PFF2 (.pf2) file's binary header — this is
 # the exact string GRUB matches font requests against, not the filename.
-# Format: 4-byte magic "PFF2", then a sequence of [4-byte tag][4-byte
-# big-endian length][data] chunks. NAME is always one of the first chunks,
-# well before the binary glyph data, so a short bounded scan is safe.
+# Real structure: a "FILE" chunk whose 4-byte data payload is the literal
+# string "PFF2" (not a bare magic string at offset 0 — that was an earlier,
+# wrong assumption here, caught by testing against real grub-mkfont output),
+# followed by a sequence of [4-byte tag][4-byte big-endian length][data]
+# chunks. NAME is always one of the first of those, well before the binary
+# glyph data, so a short bounded scan after the FILE chunk is safe.
 pf2_font_name() {
     local file="$1"
     local filesize
     filesize=$(wc -c < "$file" 2>/dev/null) || return 1
+    [ "$filesize" -lt 12 ] && return 1
 
-    local magic
-    magic="$(dd if="$file" bs=1 count=4 status=none 2>/dev/null)"
+    local file_tag
+    file_tag="$(dd if="$file" bs=1 skip=0 count=4 status=none 2>/dev/null)"
+    if [ "$file_tag" != "FILE" ]; then
+        return 1
+    fi
+
+    local file_len_hex file_len magic
+    file_len_hex="$(od -An -tx1 -j 4 -N4 "$file" 2>/dev/null | tr -d ' \n')"
+    [ -z "$file_len_hex" ] && return 1
+    file_len=$((16#$file_len_hex))
+
+    magic="$(dd if="$file" bs=1 skip=8 count="$file_len" status=none 2>/dev/null)"
     if [ "$magic" != "PFF2" ]; then
         return 1
     fi
 
-    local offset=4
+    local offset=$((8 + file_len))
     local scan_limit=4096   # NAME should appear well within this; bail out if not
     [ "$scan_limit" -gt "$filesize" ] && scan_limit=$filesize
 
@@ -165,7 +179,7 @@ pf2_font_name() {
         len=$((16#$len_hex))
 
         if [ "$tag" = "NAME" ]; then
-            dd if="$file" bs=1 skip=$((offset + 8)) count="$len" status=none 2>/dev/null
+            dd if="$file" bs=1 skip=$((offset + 8)) count="$len" status=none 2>/dev/null | tr -d '\0'
             return 0
         fi
 
